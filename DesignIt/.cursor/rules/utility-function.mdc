@@ -1,0 +1,153 @@
+---
+description: Creating/updating a utility function
+globs:
+alwaysApply: false
+---
+# Utility Functions Conventions
+
+This rule defines conventions for utility functions based on patterns found in the codebase.
+
+## File Organization
+
+- Place utility functions in dedicated directories:
+  - `utils/` for general utilities
+  - `lib/` for shared library functions
+
+- Use descriptive, kebab-case filenames that clearly indicate the function's purpose
+- One utility function per file for better modularity
+
+**Example from codebase:**
+
+```typescript
+// app/api/generate/util/base64-to-blob.ts - feature-specific utility
+export function base64ToBlob(base64Data: string, mimeType: string): Blob { /* ... */ }
+```
+
+## Function Documentation
+
+- **Always include comprehensive JSDoc comments** for utility functions
+- Document the purpose, parameters, and return values
+- Specify parameter constraints or expectations in descriptions
+- Use consistent JSDoc formatting
+
+**Template:**
+
+```typescript
+/**
+ * Brief description of what the function does
+ * @param paramName Description of parameter (include type constraints)
+ * @param anotherParam Description with any special notes
+ * @returns Description of return value and type
+ */
+export function functionName({ param1, param2 }: { param1: Type1; param2: Type2 }): ReturnType {
+  // implementation
+}
+```
+
+**Good example from [base64-to-blob.ts](mdc:shipixen/shipixen/shipixen/packages/website/app/api/generate/util/base64-to-blob.ts):**
+
+```typescript
+/**
+ * Converts a base64 string to a Blob object
+ * @param base64Data Base64 encoded string (without the data:image prefix)
+ * @param mimeType MIME type of the resulting blob
+ * @returns Blob object
+ */
+export function base64ToBlob(base64Data: string, mimeType: string): Blob {
+  // implementation
+}
+```
+
+## TypeScript Patterns
+
+- **Use explicit type annotations** for all parameters and return types
+- **Prefer primitive parameter passing** for simple utilities (not object destructuring)
+- **Use descriptive parameter names** that clearly indicate their purpose
+- **Leverage built-in browser APIs** when appropriate (like `atob()`, `Uint8Array`, `Blob`)
+
+**Pattern:**
+
+```typescript
+// Good: Clear types and descriptive names
+export function convertData(inputData: string, outputType: string): TargetType {
+  return processedResult;
+}
+
+// Avoid: Unclear parameter purposes
+export function convert(data: any, type: any): any {
+  return result;
+}
+```
+
+## Implementation Patterns
+
+- **Use explicit loops** over functional array methods for performance-critical operations
+- **Declare variables with appropriate scope** (prefer `const` over `let` when possible)
+- **Use descriptive variable names** that indicate data transformation steps
+- **Minimize intermediate variables** while maintaining readability
+
+**Example from codebase:**
+
+```typescript
+export function base64ToBlob(base64Data: string, mimeType: string): Blob {
+  const byteCharacters = atob(base64Data);           // Clear transformation step
+  const byteNumbers = new Array(byteCharacters.length); // Pre-allocated array
+
+  for (let i = 0; i < byteCharacters.length; i++) {     // Explicit loop for performance
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+
+  const byteArray = new Uint8Array(byteNumbers);        // Final transformation
+  return new Blob([byteArray], { type: mimeType });
+}
+```
+
+## Export Patterns
+
+- **Always use named exports** for utility functions
+- **Export directly from function declaration** (avoid default exports)
+- **Use camelCase for function names** following JavaScript conventions
+
+**Template:**
+
+```typescript
+// Good
+export function utilityFunctionName(): ReturnType { /* ... */ }
+
+// Avoid
+export default function(): ReturnType { /* ... */ }
+const utilityFunction = () => { /* ... */ };
+export default utilityFunction;
+```
+
+## Error Handling
+
+- **Handle edge cases** appropriate to the utility's purpose
+- **Use type guards** when working with uncertain input types
+- **Provide meaningful error messages** when validation fails
+
+**Pattern:**
+
+```typescript
+export function processData(input: string): ProcessedData {
+  if (!input || typeof input !== 'string') {
+    throw new Error('Input must be a non-empty string');
+  }
+
+  // process data
+  return result;
+}
+```
+
+## Testing Considerations
+
+- Design utilities to be **pure functions** when possible (no side effects)
+- **Avoid dependencies on external state** to improve testability
+- **Use predictable return types** that are easy to assert against
+
+## Performance Guidelines
+
+- **Pre-allocate arrays** when size is known (`new Array(length)`)
+- **Use appropriate data structures** (`Uint8Array` for byte operations)
+- **Prefer explicit loops** over array methods for large data transformations
+- **Minimize object creation** in performance-critical paths

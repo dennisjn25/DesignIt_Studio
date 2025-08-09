@@ -1,0 +1,235 @@
+---
+description: Technology stack, dependencies, and version management for DesignIT (VST3 Interface Designer)
+globs:
+alwaysApply: false
+---
+# Technology Stack and Dependencies
+
+Complete overview of the application stack, recommended versions, and best practices for DesignIT.
+
+## Core Framework Stack
+
+### Frontend Framework
+
+- **React**: `^18.3.1` - Latest stable with React 19 compatibility, improved hydration, and enhanced concurrent features
+- **TypeScript**: `^5.6.3` - Latest with improved type inference, performance optimizations, and better error messages
+- **Vite**: `^6.0.1` - Latest with enhanced HMR, improved build performance, and better TypeScript/React support
+
+### Canvas and Graphics
+
+- **Konva.js**: `^9.3.0` - 2D canvas library with enhanced performance, touch support, and WebGL acceleration
+- **React-Konva**: `^18.2.10` - React bindings for Konva, compatible with React 18.3+
+- **Canvas API**: Native HTML5 Canvas with OffscreenCanvas support for advanced graphics operations
+
+### Desktop Application
+
+- **Electron**: `^33.0.2` - Latest stable with Node.js 22, enhanced security, and improved performance
+- **Electron Builder**: `^25.1.8` - Latest with improved packaging, code signing, and distribution features
+
+## State Management and Data Flow
+
+### State Management
+
+- **Zustand**: `^5.0.1` - Latest with improved TypeScript support, better devtools, and enhanced performance
+- **Immer**: `^10.1.1` - Latest with performance optimizations and better TypeScript inference
+- **TanStack Query**: `^5.59.16` - Latest server state management with enhanced caching, optimistic updates, and React 18+ support
+
+### Form and Validation
+
+- **React Hook Form**: `^7.53.2` - Latest with improved performance, better TypeScript support, and enhanced validation
+- **Zod**: `^3.23.8` - Latest TypeScript-first schema validation with better error messages and performance
+
+## Styling and Animation
+
+### CSS Framework
+
+- **Tailwind CSS**: `^3.4.14` - Latest utility-first CSS with enhanced performance, new utilities, and improved TypeScript support
+- **Tailwind Typography**: `^0.5.15` - Latest typography plugin with improved readability and customization options
+- **Tailwind Forms**: `^0.5.9` - Latest form styling utilities with better accessibility and modern form controls
+
+### Animation
+
+- **Framer Motion**: `^11.11.17` - Latest production-ready motion library with React 18+ optimizations and enhanced performance
+- **Auto-Animate**: `^0.8.2` - Latest zero-config animation utilities with improved performance and better TypeScript support
+
+## Authentication and Storage
+
+### Authentication
+
+- **Google OAuth 2.0**: Via Google APIs client library with enhanced security features
+- **@google-cloud/storage**: `^7.13.0` - Latest Google Drive API integration with improved performance and security
+- **jose**: `^5.9.6` - Latest JWT handling with enhanced security features and better TypeScript support
+
+### Storage
+
+- **Dexie**: `^4.0.8` - Latest IndexedDB wrapper with improved TypeScript support and better performance
+- **Electron Store**: `^10.0.0` - Latest data persistence for desktop with enhanced security and better API
+
+## AI Integration
+
+### OpenAI Integration
+
+- **OpenAI**: `^4.69.0` - Latest official OpenAI API client with GPT-4 Turbo support and enhanced streaming
+- **Langchain**: `^0.3.5` - Latest for advanced prompt engineering, RAG, and AI agent workflows
+
+## Development Tools
+
+### Code Quality
+
+- **ESLint**: `^9.15.0` - Latest with flat config support, enhanced TypeScript and React rules
+- **Prettier**: `^3.3.3` - Latest code formatting with improved performance and new formatting options
+- **Husky**: `^9.1.6` - Latest git hooks with improved performance and better configuration
+- **Lint-staged**: `^15.2.10` - Latest for running linters on staged files with enhanced performance
+
+### Testing
+
+- **Vitest**: `^2.1.4` - Latest fast unit testing with improved Vite integration and better TypeScript support
+- **@testing-library/react**: `^16.0.1` - Latest React component testing with React 18+ optimizations
+- **Playwright**: `^1.48.2` - Latest E2E and visual regression testing with enhanced debugging and performance
+- **MSW**: `^2.6.2` - Latest API mocking with improved TypeScript support and better request handling
+
+## Version Management Best Practices
+
+### Dependency Versioning Strategy
+
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",           // Allow minor updates
+    "konva": "~9.2.0",            // Lock to patch updates only
+    "electron": "28.0.0"          // Lock exact version for stability
+  }
+}
+```
+
+### Version Locking Rules
+
+- **Lock exact versions** for:
+  - Electron (compatibility critical)
+  - Canvas/graphics libraries (behavior consistency)
+  - Build tools (reproducible builds)
+
+- **Allow minor updates (^)** for:
+  - React and ecosystem packages
+  - Utility libraries
+  - Development dependencies
+
+- **Allow patch updates (~)** for:
+  - Core graphics libraries
+  - Authentication libraries
+  - Critical dependencies
+
+### Security and Maintenance
+
+```bash
+# Regular maintenance commands
+npm audit                    # Check for vulnerabilities
+npm outdated                # Check for updates
+npm update                  # Update to latest compatible versions
+npm run type-check          # Verify TypeScript compatibility
+```
+
+### Package.json Structure
+
+```json
+{
+  "name": "designit-vst3-designer",
+  "version": "1.0.0",
+  "description": "Professional VST3 interface designer with AI assistance",
+  "main": "dist/electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc",
+    "electron:dev": "concurrently \"npm run dev\" \"electron .\"",
+    "electron:build": "electron-builder",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "lint": "eslint src --ext ts,tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
+```
+
+## Development Environment Requirements
+
+### Node.js Version
+
+- **Node.js**: `20.18.0` LTS or `22.12.0` LTS (recommended for Electron 33+)
+- **npm**: `10.9.0+` or **pnpm**: `9.12.3+` or **bun**: `1.1.38+`
+
+### IDE Configuration
+
+- **VSCode**: Latest with TypeScript, ESLint, Prettier extensions
+- **TypeScript**: Strict mode enabled
+- **Path mapping**: Absolute imports from `src/`
+
+## Performance Considerations
+
+### Bundle Optimization
+
+- **Code splitting**: Route-based and component-based
+- **Tree shaking**: Enabled by default in Vite
+- **Dynamic imports**: For large dependencies (AI models, canvas utilities)
+
+### Canvas Performance
+
+- **Konva**: Use `perfectDrawEnabled: false` for complex scenes
+- **Virtualization**: For large component palettes
+- **Web Workers**: For heavy computations (export generation, AI processing)
+
+## Security Best Practices
+
+### Electron Security
+
+- **Context Isolation**: Always enabled
+- **Node Integration**: Disabled in renderer
+- **CSP Headers**: Strict content security policy
+- **Preload Scripts**: For secure IPC communication
+
+### API Security
+
+- **Environment Variables**: Never commit API keys, use `.env.local` for local development
+- **Token Rotation**: Implement refresh token flow with secure storage
+- **Rate Limiting**: Client-side request throttling with exponential backoff
+- **Content Security Policy**: Strict CSP headers to prevent XSS attacks
+
+## 2024 Best Practices and Migration Notes
+
+### Breaking Changes and Migration Paths
+
+- **ESLint 9**: Migrate to flat config format, update plugin configurations
+- **React 18.3+**: Ensure compatibility with React 19 features, update concurrent mode usage
+- **Vite 6**: Update build configurations, leverage new optimization features
+- **Electron 33**: Update security configurations for Node.js 22 compatibility
+
+### Performance Optimizations (2024)
+
+- **Bundle Splitting**: Use dynamic imports with React.lazy for code splitting
+- **Tree Shaking**: Configure Vite for optimal dead code elimination
+- **Web Workers**: Offload heavy computations (AI processing, canvas operations)
+- **Service Workers**: Implement for offline functionality and caching
+
+### Security Enhancements (2024)
+
+- **Supply Chain Security**: Use `npm audit signatures` for package verification
+- **Dependency Scanning**: Implement automated vulnerability scanning in CI/CD
+- **Sandboxing**: Use Electron's context isolation and disable node integration
+- **Content Validation**: Validate all external inputs with Zod schemas
+
+### Development Workflow (2024)
+
+- **Package Manager**: Consider migrating to `pnpm` or `bun` for faster installs
+- **Monorepo Support**: Use workspaces for shared components and utilities
+- **Type Safety**: Enable strict TypeScript mode with `exactOptionalPropertyTypes`
+- **Testing Strategy**: Combine unit tests (Vitest) with visual regression (Playwright)
+
+### Maintenance Schedule
+
+- **Weekly**: Run `npm audit` and `npm outdated`
+- **Monthly**: Review and update patch versions
+- **Quarterly**: Evaluate and update minor versions
+- **Bi-annually**: Plan major version upgrades with thorough testing
